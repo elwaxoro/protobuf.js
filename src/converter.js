@@ -32,6 +32,12 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
                     ("break");
             } gen
             ("}");
+        } else if(field.resolvedType.name === "Timestamp") {
+            //Custom handler for Timestamp as a string
+            gen
+            ("if(typeof d%s!==\"string\")", prop)
+                ("throw TypeError(%j)", field.fullName + ": string expected")
+            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
