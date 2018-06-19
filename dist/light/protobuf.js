@@ -1,6 +1,6 @@
 /*!
  * protobuf.js v6.8.7 (c) 2016, daniel wirtz
- * compiled tue, 19 jun 2018 18:34:51 utc
+ * compiled tue, 19 jun 2018 19:09:07 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -6611,8 +6611,11 @@ wrappers[".google.protobuf.Any"] = {
 // Custom wrapper for Timestamp
 wrappers[".google.protobuf.Timestamp"] = {
     fromObject: function(object) {
+        console.log("Timestamp wrapper is being used on "+object);
         //Convert ISO-8601 to epoch millis
         var dt = Date.parse(object);
+        console.log("Parsed time is: "+dt);
+        throw new Error("Parsed time is: "+dt);
         return this.create({
             seconds: Math.floor(dt/1000),
             nanos: (dt % 1000) * 1000
