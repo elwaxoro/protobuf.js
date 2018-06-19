@@ -1,6 +1,6 @@
 /*!
  * protobuf.js v6.8.7 (c) 2016, daniel wirtz
- * compiled fri, 18 may 2018 08:55:41 utc
+ * compiled tue, 19 jun 2018 18:34:51 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1143,6 +1143,12 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
                     ("break");
             } gen
             ("}");
+        } else if(field.resolvedType.name === "Timestamp") {
+            //Custom handler for Timestamp as a string
+            gen
+            ("if(typeof d%s!==\"string\")", prop)
+                ("throw TypeError(%j)", field.fullName + ": string expected")
+            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
@@ -6599,6 +6605,22 @@ wrappers[".google.protobuf.Any"] = {
         }
 
         return this.toObject(message, options);
+    }
+};
+
+// Custom wrapper for Timestamp
+wrappers[".google.protobuf.Timestamp"] = {
+    fromObject: function(object) {
+        //Convert ISO-8601 to epoch millis
+        var dt = Date.parse(object);
+        return this.create({
+            seconds: Math.floor(dt/1000),
+            nanos: (dt % 1000) * 1000
+        })
+    },
+
+    toObject: function(message, options) {
+        return new Date(message.seconds*1000 + message.nanos/1000).toISOString();
     }
 };
 
