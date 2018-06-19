@@ -37,7 +37,10 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             gen
             ("if(typeof d%s!==\"string\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": string expected")
-            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop);
+            ("var dt = Date.parse(d%s)", prop)
+            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop)
+            ("m%s.seconds=Math.floor(dt/1000)", prop)
+            ("m%s.nanos=(dt\%1000)*1000", prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
@@ -163,7 +166,11 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
     if (field.resolvedType) {
         if (field.resolvedType instanceof Enum) gen
             ("d%s=o.enums===String?types[%i].values[m%s]:m%s", prop, fieldIndex, prop, prop);
-        else gen
+        else if(field.resolvedType.name === "Timestamp") {
+            //Custom handler for Timestamp as a string
+            gen
+            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000).toISOString()", prop, prop, prop);
+        } else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
         var isUnsigned = false;

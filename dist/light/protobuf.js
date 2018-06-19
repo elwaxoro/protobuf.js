@@ -1,6 +1,6 @@
 /*!
  * protobuf.js v6.8.7 (c) 2016, daniel wirtz
- * compiled tue, 19 jun 2018 19:09:07 utc
+ * compiled tue, 19 jun 2018 20:29:04 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1148,7 +1148,10 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             gen
             ("if(typeof d%s!==\"string\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": string expected")
-            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop);
+            ("var dt = Date.parse(d%s)", prop)
+            ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop)
+            ("m%s.seconds=Math.floor(dt/1000)", prop)
+            ("m%s.nanos=(dt\%1000)*1000", prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
@@ -1274,7 +1277,11 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
     if (field.resolvedType) {
         if (field.resolvedType instanceof Enum) gen
             ("d%s=o.enums===String?types[%i].values[m%s]:m%s", prop, fieldIndex, prop, prop);
-        else gen
+        else if(field.resolvedType.name === "Timestamp") {
+            //Custom handler for Timestamp as a string
+            gen
+            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000).toISOString()", prop, prop, prop);
+        } else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
         var isUnsigned = false;
@@ -6611,11 +6618,8 @@ wrappers[".google.protobuf.Any"] = {
 // Custom wrapper for Timestamp
 wrappers[".google.protobuf.Timestamp"] = {
     fromObject: function(object) {
-        console.log("Timestamp wrapper is being used on "+object);
         //Convert ISO-8601 to epoch millis
         var dt = Date.parse(object);
-        console.log("Parsed time is: "+dt);
-        throw new Error("Parsed time is: "+dt);
         return this.create({
             seconds: Math.floor(dt/1000),
             nanos: (dt % 1000) * 1000
