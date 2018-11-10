@@ -93,7 +93,7 @@ wrappers[".google.protobuf.Timestamp"] = {
         });
     },
 
-    toObject: function(message) {
+    toObject: function(message, options) {
         return new Date(message.seconds*1000 + message.nanos/1000000).toISOString();
     }
 };
