@@ -1,6 +1,6 @@
 /*!
  * protobuf.js v6.8.8 (c) 2016, daniel wirtz
- * compiled sat, 10 nov 2018 03:38:18 utc
+ * compiled sat, 10 nov 2018 03:53:49 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -1151,7 +1151,7 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             ("var dt = Date.parse(d%s)", prop)
             ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop)
             ("m%s.seconds=Math.floor(dt/1000)", prop)
-            ("m%s.nanos=(dt\%1000)*1000", prop);
+            ("m%s.nanos=(dt\%1000)*1000000", prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
@@ -1280,7 +1280,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
         else if(field.resolvedType.name === "Timestamp") {
             //Custom handler for Timestamp as a string
             gen
-            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000).toISOString()", prop, prop, prop);
+            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000000).toISOString()", prop, prop, prop);
         } else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
@@ -6622,12 +6622,12 @@ wrappers[".google.protobuf.Timestamp"] = {
         var dt = Date.parse(object);
         return this.create({
             seconds: Math.floor(dt/1000),
-            nanos: (dt % 1000) * 1000
-        })
+            nanos: dt % 1000 * 1000000
+        });
     },
 
     toObject: function(message, options) {
-        return new Date(message.seconds*1000 + message.nanos/1000).toISOString();
+        return new Date(message.seconds*1000 + message.nanos/1000000).toISOString();
     }
 };
 
