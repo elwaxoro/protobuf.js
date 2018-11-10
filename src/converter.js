@@ -40,7 +40,7 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
             ("var dt = Date.parse(d%s)", prop)
             ("m%s=types[%i].fromObject(d%s)", prop, fieldIndex, prop)
             ("m%s.seconds=Math.floor(dt/1000)", prop)
-            ("m%s.nanos=(dt\%1000)*1000", prop);
+            ("m%s.nanos=(dt\%1000)*1000000", prop);
         } else gen
             ("if(typeof d%s!==\"object\")", prop)
                 ("throw TypeError(%j)", field.fullName + ": object expected")
