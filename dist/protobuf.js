@@ -1,6 +1,6 @@
 /*!
- * protobuf.js v6.8.7 (c) 2016, daniel wirtz
- * compiled tue, 19 jun 2018 20:29:04 utc
+ * protobuf.js v6.8.8 (c) 2016, daniel wirtz
+ * compiled sat, 10 nov 2018 03:38:18 utc
  * licensed under the bsd-3-clause license
  * see: https://github.com/dcodeio/protobuf.js for details
  */
@@ -2879,7 +2879,7 @@ var util = require(39);
  * @classdesc Abstract runtime message.
  * @constructor
  * @param {Properties<T>} [properties] Properties to set
- * @template T extends object
+ * @template T extends object = object
  */
 function Message(properties) {
     // not used internally
@@ -3226,7 +3226,7 @@ Namespace.arrayToJSON = arrayToJSON;
 Namespace.isReservedId = function isReservedId(reserved, id) {
     if (reserved)
         for (var i = 0; i < reserved.length; ++i)
-            if (typeof reserved[i] !== "string" && reserved[i][0] <= id && reserved[i][1] >= id)
+            if (typeof reserved[i] !== "string" && reserved[i][0] <= id && reserved[i][1] > id)
                 return true;
     return false;
 };
