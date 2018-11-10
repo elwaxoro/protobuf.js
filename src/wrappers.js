@@ -89,11 +89,11 @@ wrappers[".google.protobuf.Timestamp"] = {
         var dt = Date.parse(object);
         return this.create({
             seconds: Math.floor(dt/1000),
-            nanos: (dt % 1000) * 1000
+            nanos: (dt % 1000) * 1000000
         })
     },
 
     toObject: function(message, options) {
-        return new Date(message.seconds*1000 + message.nanos/1000).toISOString();
+        return new Date(message.seconds*1000 + message.nanos/1000000).toISOString();
     }
 };
