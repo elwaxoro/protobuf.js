@@ -169,7 +169,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
         else if(field.resolvedType.name === "Timestamp") {
             //Custom handler for Timestamp as a string
             gen
-            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000).toISOString()", prop, prop, prop);
+            ("d%s=new Date(m%s.seconds*1000+m%s.nanos/1000000).toISOString()", prop, prop, prop);
         } else gen
             ("d%s=types[%i].toObject(m%s,o)", prop, fieldIndex, prop);
     } else {
